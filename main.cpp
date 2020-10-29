@@ -38,6 +38,8 @@ string CellString(State cell)
     //case State::kObstacle: return "⛰️   ";
     case State::kObstacle:
         return "X   ";
+    case State::kClosed:
+        return "C   ";
     default:
         return "0   ";
     }
@@ -60,17 +62,30 @@ int Heuristic(int x1, int y1, int x2, int y2)
     return abs(x2 - x1) + abs(y2 - y1);
 }
 
-vector<vector<State>> Search(vector<vector<State>> board, int init[2], int goal[2])
+void AddToOpen(int x, int y, int g, int h, vector<vector<int>> &open, vector<vector<State>> &grid){
+    vector<int> node = {x, y, g, h};
+    open.push_back(node);
+    grid[x][y] = State::kClosed;
+}
+
+vector<vector<State>> Search(vector<vector<State>> grid, int init[2], int goal[2])
 {
+    vector<vector<int>> open{};
+    int x = init[0];
+    int y = init[1];
+    int g = 0;
+    int h = Heuristic(x,y, goal[0], goal[1]);
+    AddToOpen(x, y, g, h, open, grid); 
     cout << "No path found!\n";
     return vector<vector<State>>{};
 }
 
+
 int main()
 {
-    //auto board = ReadBoardFile("1.board");
     int init[2]{0, 0};
     int goal[2]{4, 5};
-    cout << "Manhattan calc: " << Heuristic(init[0], init[1], goal[0], goal[1]) << std::endl;
+    auto board = ReadBoardFile("1.board");
+    auto solution = Search(board, init, goal);
     return 0;
 }

@@ -12,5 +12,6 @@ using std::vector;
 enum class State
 {
     kEmpty,
-    kObstacle
+    kObstacle,
+    kClosed
 };
