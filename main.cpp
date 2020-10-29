@@ -55,6 +55,12 @@ void PrintBoard(vector<vector<State>> board)
     }
 }
 
+vector<vector<State>> Search(vector<vector<State>> board){
+    cout << "No path found!\n";
+    return vector<vector<State>>{};
+}
+
+
 int main()
 {
     auto board = ReadBoardFile("1.board");
