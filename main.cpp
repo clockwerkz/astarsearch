@@ -55,15 +55,22 @@ void PrintBoard(vector<vector<State>> board)
     }
 }
 
-vector<vector<State>> Search(vector<vector<State>> board){
+int Heuristic(int x1, int y1, int x2, int y2)
+{
+    return abs(x2 - x1) + abs(y2 - y1);
+}
+
+vector<vector<State>> Search(vector<vector<State>> board, int init[2], int goal[2])
+{
     cout << "No path found!\n";
     return vector<vector<State>>{};
 }
 
-
 int main()
 {
-    auto board = ReadBoardFile("1.board");
-    PrintBoard(board);
+    //auto board = ReadBoardFile("1.board");
+    int init[2]{0, 0};
+    int goal[2]{4, 5};
+    cout << "Manhattan calc: " << Heuristic(init[0], init[1], goal[0], goal[1]) << std::endl;
     return 0;
 }
