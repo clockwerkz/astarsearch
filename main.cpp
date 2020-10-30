@@ -40,6 +40,8 @@ string CellString(State cell)
         return "X   ";
     case State::kClosed:
         return "C   ";
+    case State::kPath:
+        return "P   ";
     default:
         return "0   ";
     }
@@ -62,9 +64,17 @@ int Heuristic(int x1, int y1, int x2, int y2)
     return abs(x2 - x1) + abs(y2 - y1);
 }
 
+bool CompareValues(vector<int> pointA, vector<int> pointB)
+{
+    int f1 = pointA[2] + pointA[3];
+    int f2 = pointB[2] + pointB[3];
+    return f1 > f2;
+}
+
 void AddToOpen(int x, int y, int g, int h, vector<vector<int>> &open, vector<vector<State>> &grid)
 {
-    if (grid[x][y] == State::kClosed)
+    State nodeStatus = grid[x][y];
+    if (nodeStatus != State::kEmpty)
     {
         return;
     }
@@ -83,37 +93,42 @@ vector<vector<State>> Search(vector<vector<State>> grid, int init[2], int goal[2
     int h = Heuristic(x, y, goal[0], goal[1]);
     //Add starting point to Open list
     AddToOpen(x, y, g, h, open, grid);
-    //Top Neightbor
-    if (y > 0)
+    while (open.size() > 0)
     {
-        h = Heuristic(x, y - 1, goal[0], goal[1]);
-        AddToOpen(x, y - 1, g + 1, h, open, grid);
-    }
-    //Left Neightbor
-    if (x > 0)
-    {
-        h = Heuristic(x - 1, y, goal[0], goal[1]);
-        AddToOpen(x - 1, y, g + 1, h, open, grid);
-    }
-    //Bottom Neightbor
-    if (y < grid.size() - 1)
-    {
-        h = Heuristic(x, y + 1, goal[0], goal[1]);
-        AddToOpen(x, y + 1, g + 1, h, open, grid);
-    }
-    //Right Neightbor
-    if (x < grid[0].size() - 1)
-    {
-        h = Heuristic(x + 1, y, goal[0], goal[1]);
-        AddToOpen(x + 1, y, g + 1, h, open, grid);
-    }
-    for (vector<int> node : open)
-    {
-        for (int element : node)
+        std::sort(open.begin(), open.end(), CompareValues);
+        vector<int> currentNode = open[0];
+        open.erase(open.begin());
+        x = currentNode[0];
+        y = currentNode[1];
+        grid[x][y] = State::kPath;
+        if (x == goal[0] && y == goal[1])
         {
-            cout << element << " ";
+            return grid;
         }
-        cout << std::endl;
+        //Top Neightbor
+        if (y > 0)
+        {
+            h = Heuristic(x, y - 1, goal[0], goal[1]);
+            AddToOpen(x, y - 1, g + 1, h, open, grid);
+        }
+        //Left Neightbor
+        if (x > 0)
+        {
+            h = Heuristic(x - 1, y, goal[0], goal[1]);
+            AddToOpen(x - 1, y, g + 1, h, open, grid);
+        }
+        //Bottom Neightbor
+        if (y < grid.size() - 1)
+        {
+            h = Heuristic(x, y + 1, goal[0], goal[1]);
+            AddToOpen(x, y + 1, g + 1, h, open, grid);
+        }
+        //Right Neightbor
+        if (x < grid[0].size() - 1)
+        {
+            h = Heuristic(x + 1, y, goal[0], goal[1]);
+            AddToOpen(x + 1, y, g + 1, h, open, grid);
+        }
     }
     cout << "No path found!\n";
     return vector<vector<State>>{};
@@ -124,6 +139,10 @@ int main()
     int init[2]{0, 0};
     int goal[2]{4, 5};
     auto board = ReadBoardFile("1.board");
+    cout << "Board:\n";
+    PrintBoard(board);
+    cout << "\n\nSolution:\n";
     auto solution = Search(board, init, goal);
+    PrintBoard(solution);
     return 0;
 }

@@ -3,6 +3,7 @@
 #include <string>
 #include <fstream>
 #include <sstream>
+#include <algorithm>
 
 using std::cout;
 using std::string;
@@ -12,5 +13,6 @@ enum class State
 {
     kEmpty,
     kObstacle,
-    kClosed
+    kClosed,
+    kPath
 };
