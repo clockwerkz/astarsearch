@@ -3,7 +3,6 @@
 #include <string>
 #include <fstream>
 #include <sstream>
-#include <stdlib.h>
 
 using std::cout;
 using std::string;
