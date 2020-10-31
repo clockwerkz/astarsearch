@@ -14,5 +14,7 @@ enum class State
     kEmpty,
     kObstacle,
     kClosed,
-    kPath
+    kPath,
+    kStart,
+    kGoal
 };

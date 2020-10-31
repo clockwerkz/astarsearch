@@ -38,12 +38,14 @@ string CellString(State cell)
     //case State::kObstacle: return "⛰️   ";
     case State::kObstacle:
         return "X   ";
-    case State::kClosed:
-        return "C   ";
     case State::kPath:
-        return "P   ";
+        return "o   ";
+    case State::kStart:
+        return "S   ";
+    case State::kGoal:
+        return "G   ";
     default:
-        return "0   ";
+        return "-   ";
     }
 }
 
@@ -71,7 +73,8 @@ bool CompareValues(vector<int> pointA, vector<int> pointB)
     return f1 > f2;
 }
 
-void CellSort(vector<vector<int>> *v){
+void CellSort(vector<vector<int>> *v)
+{
     std::sort(v->begin(), v->end(), CompareValues);
 }
 
@@ -84,15 +87,35 @@ void AddToOpen(int x, int y, int g, int h, vector<vector<int>> &open, vector<vec
     }
     vector<int> node = {x, y, g, h};
     open.push_back(node);
-    grid[x][y] = State::kClosed;
 }
 
 bool CheckValidCell(int x, int y, const vector<vector<State>> &grid)
 {
-    if (x < 0 || x >= grid.size()) return false;
-    if (y < 0 || y >= grid[0].size()) return false;
-    if (grid[x][y] != State::kEmpty) return false;
+    if (x < 0 || x >= grid.size())
+        return false;
+    if (y < 0 || y >= grid[0].size())
+        return false;
+    if (grid[x][y] != State::kEmpty)
+        return false;
     return true;
+}
+
+void ExpandNeighbors(const vector<int> &current, vector<vector<int>> &open, int goal[2], vector<vector<State>> &grid)
+{
+    const int adj[4][2] = {{-1, 0}, {0, -1}, {1, 0}, {0, 1}};
+    int x = current[0];
+    int y = current[1];
+    for (int i = 0; i < 4; i++)
+    {
+        int x2 = x + adj[i][0];
+        int y2 = y + adj[i][1];
+        if (CheckValidCell(x2, y2, grid))
+        {
+            int g2 = current[2] + 1;
+            int h2 = Heuristic(x2, y2, goal[0], goal[1]);
+            AddToOpen(x2, y2, g2, h2, open, grid);
+        }
+    }
 }
 
 /* A Star Search Function */
@@ -113,16 +136,14 @@ vector<vector<State>> Search(vector<vector<State>> grid, int init[2], int goal[2
         open.pop_back();
         x = currentNode[0];
         y = currentNode[1];
+        grid[x][y] = State::kPath;
         if (x == goal[0] && y == goal[1])
         {
+            grid[init[0]][init[1]] = State::kStart;
+            grid[goal[0]][goal[1]] = State::kGoal;
             return grid;
         }
-        //TODO: Break out this operation into another function - NEED to calculate NEW H value on projected neighbor coord
-        if (CheckValidCell(x, y - 1, grid)) AddToOpen(x, y - 1, g + 1, h, open, grid);
-        if (CheckValidCell(x - 1, y, grid))  AddToOpen(x - 1, y, g + 1, h, open, grid);
-        if (CheckValidCell(x, y + 1, grid)) AddToOpen(x, y + 1, g + 1, h, open, grid);
-        if (CheckValidCell(x + 1, y, grid)) AddToOpen(x + 1, y, g + 1, h, open, grid);
-
+        ExpandNeighbors(currentNode, open, goal, grid);
     }
     cout << "No path found!\n";
     return vector<vector<State>>{};
@@ -135,7 +156,7 @@ void PrintList(vector<vector<int>> list)
         int fValue = row[2] + row[3];
         for (auto cell : row)
         {
-            cout << cell << "  "; 
+            cout << cell << "  ";
         }
         cout << "f value: " << fValue << std::endl;
     }
@@ -144,12 +165,11 @@ void PrintList(vector<vector<int>> list)
 void TestSortingFunction()
 {
     vector<vector<int>> openList{
-        {0,0,3,0},
-        {0,1,2,0},
-        {0,2,1,0},
-        {3,3,4,5},
-        {4,0,5,5}
-    };
+        {0, 0, 3, 0},
+        {0, 1, 2, 0},
+        {0, 2, 1, 0},
+        {3, 3, 4, 5},
+        {4, 0, 5, 5}};
     cout << "Before sorting:\n";
     cout << "-----------------\n";
     PrintList(openList);
