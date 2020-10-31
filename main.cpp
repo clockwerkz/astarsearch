@@ -71,6 +71,10 @@ bool CompareValues(vector<int> pointA, vector<int> pointB)
     return f1 > f2;
 }
 
+void CellSort(vector<vector<int>> *v){
+    std::sort(v->begin(), v->end(), CompareValues);
+}
+
 void AddToOpen(int x, int y, int g, int h, vector<vector<int>> &open, vector<vector<State>> &grid)
 {
     State nodeStatus = grid[x][y];
@@ -95,12 +99,11 @@ vector<vector<State>> Search(vector<vector<State>> grid, int init[2], int goal[2
     AddToOpen(x, y, g, h, open, grid);
     while (open.size() > 0)
     {
-        std::sort(open.begin(), open.end(), CompareValues);
-        vector<int> currentNode = open[0];
-        open.erase(open.begin());
+        CellSort(&open);
+        vector<int> currentNode = open.back();
+        open.pop_back();
         x = currentNode[0];
         y = currentNode[1];
-        grid[x][y] = State::kPath;
         if (x == goal[0] && y == goal[1])
         {
             return grid;
@@ -129,6 +132,8 @@ vector<vector<State>> Search(vector<vector<State>> grid, int init[2], int goal[2
             h = Heuristic(x + 1, y, goal[0], goal[1]);
             AddToOpen(x + 1, y, g + 1, h, open, grid);
         }
+        cout << "-------------------------\n";
+        PrintBoard(grid);
     }
     cout << "No path found!\n";
     return vector<vector<State>>{};
@@ -141,8 +146,8 @@ int main()
     auto board = ReadBoardFile("1.board");
     cout << "Board:\n";
     PrintBoard(board);
-    cout << "\n\nSolution:\n";
     auto solution = Search(board, init, goal);
+    cout << "\n\nSolution:\n";
     PrintBoard(solution);
     return 0;
 }
