@@ -63,7 +63,7 @@ int Heuristic(int x1, int y1, int x2, int y2)
 {
     return abs(x2 - x1) + abs(y2 - y1);
 }
-
+// Sorts in desc order (A > B)
 bool CompareValues(vector<int> pointA, vector<int> pointB)
 {
     int f1 = pointA[2] + pointA[3];
@@ -100,6 +100,7 @@ vector<vector<State>> Search(vector<vector<State>> grid, int init[2], int goal[2
     while (open.size() > 0)
     {
         CellSort(&open);
+        //last element will be the smallest f value
         vector<int> currentNode = open.back();
         open.pop_back();
         x = currentNode[0];
@@ -132,22 +133,54 @@ vector<vector<State>> Search(vector<vector<State>> grid, int init[2], int goal[2
             h = Heuristic(x + 1, y, goal[0], goal[1]);
             AddToOpen(x + 1, y, g + 1, h, open, grid);
         }
-        cout << "-------------------------\n";
-        PrintBoard(grid);
     }
     cout << "No path found!\n";
     return vector<vector<State>>{};
 }
 
+void PrintList(vector<vector<int>> list)
+{
+    for (auto row : list)
+    {
+        int fValue = row[2] + row[3];
+        for (auto cell : row)
+        {
+            cout << cell << "  "; 
+        }
+        cout << "f value: " << fValue << std::endl;
+    }
+}
+
+void TestSortingFunction()
+{
+    vector<vector<int>> openList{
+        {0,0,3,0},
+        {0,1,2,0},
+        {0,2,1,0},
+        {3,3,4,5},
+        {4,0,5,5}
+    };
+    cout << "Before sorting:\n";
+    cout << "-----------------\n";
+    PrintList(openList);
+    CellSort(&openList);
+    cout << "After Sorting\n";
+    cout << "-----------------\n";
+    PrintList(openList);
+}
+
 int main()
 {
     int init[2]{0, 0};
-    int goal[2]{4, 5};
-    auto board = ReadBoardFile("1.board");
+    int goal[2]{7, 7};
+    auto board = ReadBoardFile("2.board");
     cout << "Board:\n";
     PrintBoard(board);
     auto solution = Search(board, init, goal);
     cout << "\n\nSolution:\n";
     PrintBoard(solution);
+    //Testing Sorting Function
+    //------------------------
+    //TestSortingFunction();
     return 0;
 }
