@@ -87,6 +87,14 @@ void AddToOpen(int x, int y, int g, int h, vector<vector<int>> &open, vector<vec
     grid[x][y] = State::kClosed;
 }
 
+bool CheckValidCell(int x, int y, const vector<vector<State>> &grid)
+{
+    if (x < 0 || x >= grid.size()) return false;
+    if (y < 0 || y >= grid[0].size()) return false;
+    if (grid[x][y] != State::kEmpty) return false;
+    return true;
+}
+
 /* A Star Search Function */
 vector<vector<State>> Search(vector<vector<State>> grid, int init[2], int goal[2])
 {
@@ -109,30 +117,11 @@ vector<vector<State>> Search(vector<vector<State>> grid, int init[2], int goal[2
         {
             return grid;
         }
-        //Top Neightbor
-        if (y > 0)
-        {
-            h = Heuristic(x, y - 1, goal[0], goal[1]);
-            AddToOpen(x, y - 1, g + 1, h, open, grid);
-        }
-        //Left Neightbor
-        if (x > 0)
-        {
-            h = Heuristic(x - 1, y, goal[0], goal[1]);
-            AddToOpen(x - 1, y, g + 1, h, open, grid);
-        }
-        //Bottom Neightbor
-        if (y < grid.size() - 1)
-        {
-            h = Heuristic(x, y + 1, goal[0], goal[1]);
-            AddToOpen(x, y + 1, g + 1, h, open, grid);
-        }
-        //Right Neightbor
-        if (x < grid[0].size() - 1)
-        {
-            h = Heuristic(x + 1, y, goal[0], goal[1]);
-            AddToOpen(x + 1, y, g + 1, h, open, grid);
-        }
+        if (CheckValidCell(x, y - 1, grid)) AddToOpen(x, y - 1, g + 1, h, open, grid);
+        if (CheckValidCell(x - 1, y, grid))  AddToOpen(x - 1, y, g + 1, h, open, grid);
+        if (CheckValidCell(x, y + 1, grid)) AddToOpen(x, y + 1, g + 1, h, open, grid);
+        if (CheckValidCell(x + 1, y, grid)) AddToOpen(x + 1, y, g + 1, h, open, grid);
+
     }
     cout << "No path found!\n";
     return vector<vector<State>>{};
