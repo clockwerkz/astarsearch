@@ -117,6 +117,7 @@ vector<vector<State>> Search(vector<vector<State>> grid, int init[2], int goal[2
         {
             return grid;
         }
+        //TODO: Break out this operation into another function - NEED to calculate NEW H value on projected neighbor coord
         if (CheckValidCell(x, y - 1, grid)) AddToOpen(x, y - 1, g + 1, h, open, grid);
         if (CheckValidCell(x - 1, y, grid))  AddToOpen(x - 1, y, g + 1, h, open, grid);
         if (CheckValidCell(x, y + 1, grid)) AddToOpen(x, y + 1, g + 1, h, open, grid);
@@ -161,8 +162,8 @@ void TestSortingFunction()
 int main()
 {
     int init[2]{0, 0};
-    int goal[2]{7, 7};
-    auto board = ReadBoardFile("2.board");
+    int goal[2]{4, 5};
+    auto board = ReadBoardFile("3.board");
     cout << "Board:\n";
     PrintBoard(board);
     auto solution = Search(board, init, goal);
