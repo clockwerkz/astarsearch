@@ -1,8 +1,10 @@
 #include <iostream>
 #include <vector>
+#include <string>
 
 using std::cout;
 using std::vector;
+using std::string;
 
 void PointerTest(int *a)
 {
@@ -38,5 +40,10 @@ int main()
     cout << "Vector after calling function:\n";
     for (auto i : numList) {
         cout << i << std::endl;
+    }
+    string name = "Carlos";
+    for (const char &letter : name)
+    {
+        cout << letter << " ";
     }
 }
