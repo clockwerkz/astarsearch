@@ -19,7 +19,10 @@ void VectorPointerTest(vector<int> *v)
     for (auto i : *v){
         cout << i << std::endl;
     }
-    (*v)[1] = 30;
+    // (*v)[1] = 30;
+    vector<int> v2{5,6,7,8,9,10};
+    v = &v2;
+    cout << "Variable v now points to: " << v << std::endl;
 }
 
 int main()
@@ -31,6 +34,7 @@ int main()
     //cout << "The value of num now is: " << num << std::endl;
     vector<int> numList {1,2,3};
     VectorPointerTest(&numList);
+    int *empty_ptr;
     cout << "Vector after calling function:\n";
     for (auto i : numList) {
         cout << i << std::endl;
